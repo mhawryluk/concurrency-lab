@@ -1,24 +1,24 @@
 package lab3.tablefortwo;
 
-import lab3.printers.P;
-import lab3.printers.PrinterMonitor;
 
 public class Main {
     public static void main(String[] args) {
-        int threadCount = 10;
-        int printerCount = 3;
+        int pairsCount = 5;
 
-        Thread [] threads = new Thread[threadCount];
-        PrinterMonitor printerMonitor = new PrinterMonitor(printerCount);
+        Guest [] guests = new Guest[pairsCount*2];
+        Waiter waiter = new Waiter();
 
-        for (int i = 0; i < threadCount; i++){
-            threads[i] = new P(printerMonitor);;
-            threads[i].start();
+        for (int i = 0; i < pairsCount; i++){
+            guests[2*i] = new Guest(waiter, i);
+            guests[2*i].start();
+
+            guests[2*i + 1] = new Guest(waiter, i);
+            guests[2*i + 1].start();
         }
 
         try {
-            for (Thread thread : threads){
-                thread.join();
+            for (Thread guest : guests){
+                guest.join();
             }
 
         } catch (InterruptedException e) {
