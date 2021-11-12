@@ -13,7 +13,7 @@ public class Producer extends Thread{
 
     public void run(){
         for (int i = 0; i < 3; i++){
-            buffer.remove(rand.nextInt(buffer.maxProductCount/2));
+            buffer.add(rand.nextInt(buffer.maxProductCount/2 + 1));
         }
     }
 }

@@ -13,7 +13,7 @@ public class Consumer extends Thread{
 
     public void run(){
         for (int i = 0; i < 3; i++){
-            buffer.add(rand.nextInt(buffer.maxProductCount/2));
+            buffer.remove(rand.nextInt(buffer.maxProductCount/2 + 1));
         }
     }
 }
