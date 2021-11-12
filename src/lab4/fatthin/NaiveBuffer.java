@@ -7,33 +7,23 @@ public class NaiveBuffer extends Buffer{
         super(maxProductCount);
     }
 
-    synchronized public void put(int count){
-        try {
-            while (this.maxProductCount - productCount < count){
-                wait();
-            }
-
-            productCount += count;
-            System.out.println("added " + count + " items, product count = " + productCount);
-            notifyAll();
-
-        } catch (InterruptedException e){
-            e.printStackTrace();
+    synchronized public void put(int count) throws InterruptedException {
+        while (this.maxProductCount - productCount < count){
+            wait();
         }
+
+        productCount += count;
+//        System.out.println("added " + count + " items, product count = " + productCount);
+        notifyAll();
     }
 
-    synchronized public void get(int count){
-        try {
-            while (productCount < count){
-                wait();
-            }
-
-            productCount -= count;
-            System.out.println("removed " + count + " items, product count = " + productCount);
-            notifyAll();
-
-        } catch (InterruptedException e){
-            e.printStackTrace();
+    synchronized public void get(int count) throws InterruptedException {
+        while (productCount < count){
+            wait();
         }
+
+        productCount -= count;
+//        System.out.println("removed " + count + " items, product count = " + productCount);
+        notifyAll();
     }
 }

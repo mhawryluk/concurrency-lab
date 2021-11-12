@@ -21,7 +21,7 @@ public class FairBuffer extends Buffer{
         super(maxProductCount);
     }
 
-    public void put(int count){
+    public void put(int count) throws InterruptedException{
         lock.lock();
         try {
             while (producerWaiting){
@@ -29,7 +29,7 @@ public class FairBuffer extends Buffer{
             }
 
             producerWaiting = true;
-            System.out.println("first producer, count: " + count + " productCount: " + productCount);
+//            System.out.println("first producer, count: " + count + " productCount: " + productCount);
 
             while (maxProductCount - productCount < count){
                 firstProducerCond.await();
@@ -38,19 +38,17 @@ public class FairBuffer extends Buffer{
             productCount += count;
             producerWaiting = false;
 
-            System.out.println("added " + count + " items, product count = " + productCount);
+//            System.out.println("added " + count + " items, product count = " + productCount);
 
             producersCond.signalAll();
             firstConsumerCond.signal();
 
-        } catch (InterruptedException e){
-            e.printStackTrace();
         } finally {
             lock.unlock();
         }
     }
 
-    public void get(int count){
+    public void get(int count) throws InterruptedException{
         lock.lock();
         try {
             while (consumerWaiting){
@@ -58,7 +56,7 @@ public class FairBuffer extends Buffer{
             }
 
             consumerWaiting = true;
-            System.out.println("first consumer, count: " + count + " productCount: " + productCount);
+//            System.out.println("first consumer, count: " + count + " productCount: " + productCount);
 
             while (productCount < count){
                 firstConsumerCond.await();
@@ -67,12 +65,10 @@ public class FairBuffer extends Buffer{
             productCount -= count;
             consumerWaiting = false;
 
-            System.out.println("removed " + count + " items, product count = " + productCount);
+//            System.out.println("removed " + count + " items, product count = " + productCount);
 
             consumersCond.signalAll();
             firstProducerCond.signal();
-        } catch (InterruptedException e){
-            e.printStackTrace();
         } finally {
             lock.unlock();
         }
