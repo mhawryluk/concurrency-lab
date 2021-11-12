@@ -6,7 +6,7 @@ public class Main {
         int producerCount = 3;
         int consumerCount = 3;
 
-        Buffer buffer = new Buffer(10);
+        Buffer buffer = new FairBuffer(10);
 
         Producer [] producers = new Producer[producerCount];
         Consumer [] consumers = new Consumer[consumerCount];

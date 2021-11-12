@@ -5,7 +5,7 @@ import java.util.Random;
 public class Consumer extends Thread{
 
     private final Buffer buffer;
-    private Random rand = new Random();
+    private final Random rand = new Random();
 
     public Consumer(Buffer buffer){
         this.buffer = buffer;
@@ -13,7 +13,9 @@ public class Consumer extends Thread{
 
     public void run(){
         for (int i = 0; i < 3; i++){
-            buffer.remove(rand.nextInt(buffer.maxProductCount/2 + 1));
+            buffer.get(rand.nextInt(buffer.maxProductCount/2) + 1);
         }
+
+        System.out.println("consumer finished");
     }
 }

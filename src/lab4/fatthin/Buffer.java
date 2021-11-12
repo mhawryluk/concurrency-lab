@@ -1,40 +1,14 @@
 package lab4.fatthin;
 
-public class Buffer {
-    private int productCount = 0;
-    public final int maxProductCount;
+public abstract class Buffer {
 
-    public Buffer(int maxProductCount){
+    protected final int maxProductCount;
+
+    protected Buffer(int maxProductCount) {
         this.maxProductCount = maxProductCount;
     }
 
-    synchronized public void add(int count){
-        try {
-            while (this.maxProductCount - productCount < count){
-                wait();
-            }
-
-            productCount += count;
-            System.out.println("added " + count + " items, product count = " + productCount);
-            notifyAll();
-
-        } catch (InterruptedException e){
-            e.printStackTrace();
-        }
-    }
-
-    synchronized public void remove(int count){
-        try {
-            while (productCount < count){
-                wait();
-            }
-
-            productCount -= count;
-            System.out.println("removed " + count + " items, product count = " + productCount);
-            notifyAll();
-
-        } catch (InterruptedException e){
-            e.printStackTrace();
-        }
-    }
+    abstract public void put(int count);
+    abstract public void get(int count);
 }
+

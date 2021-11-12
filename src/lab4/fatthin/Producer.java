@@ -5,7 +5,7 @@ import java.util.Random;
 public class Producer extends Thread{
 
     private final Buffer buffer;
-    private Random rand = new Random();
+    private final Random rand = new Random();
 
     public Producer(Buffer buffer){
         this.buffer = buffer;
@@ -13,7 +13,9 @@ public class Producer extends Thread{
 
     public void run(){
         for (int i = 0; i < 3; i++){
-            buffer.add(rand.nextInt(buffer.maxProductCount/2 + 1));
+            buffer.put(rand.nextInt(buffer.maxProductCount/2) + 1);
         }
+
+        System.out.println("producer finished");
     }
 }
