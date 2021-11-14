@@ -13,7 +13,8 @@ public class NaiveBuffer extends Buffer{
         }
 
         productCount += count;
-//        System.out.println("added " + count + " items, product count = " + productCount);
+        if (Buffer.log) System.out.println("added " + count + " items, product count = " + productCount);
+
         notifyAll();
     }
 
@@ -23,7 +24,8 @@ public class NaiveBuffer extends Buffer{
         }
 
         productCount -= count;
-//        System.out.println("removed " + count + " items, product count = " + productCount);
+        if (Buffer.log) System.out.println("removed " + count + " items, product count = " + productCount);
+
         notifyAll();
     }
 }

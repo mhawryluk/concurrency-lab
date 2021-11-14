@@ -7,15 +7,17 @@ import java.util.*;
 
 class TimeRecord {
     public int count = 0;
-    public long timeSum;
+    public long timeSum = 0;
 }
 
 public abstract class Buffer {
 
     protected final int maxProductCount;
 
-    public final int PRODUCER = 0;
-    public final int CONSUMER = 1;
+    static public boolean log = false;
+
+    static public final int PRODUCER = 0;
+    static public final int CONSUMER = 1;
 
     private final HashMap<Integer, TimeRecord> producerTimes = new HashMap<>();
     private final HashMap<Integer, TimeRecord> consumerTimes = new HashMap<>();
@@ -24,31 +26,26 @@ public abstract class Buffer {
         this.maxProductCount = maxProductCount;
     }
 
+    abstract public void put(int count) throws InterruptedException;
+    abstract public void get(int count) throws InterruptedException;
+
     protected void saveTime(int threadType, int count, long time){
-        TimeRecord timeRecord;
 
-        switch (threadType){
-            case PRODUCER -> {
-                if (!producerTimes.containsKey(count)) {
-                    producerTimes.put(count, new TimeRecord());
-                }
+        var timesMap = switch (threadType) {
+            case PRODUCER -> producerTimes;
+            case CONSUMER -> consumerTimes;
+            default -> throw new IllegalStateException("Unexpected threadType: " + threadType);
+        };
 
-                timeRecord = producerTimes.get(count);
-                if (timeRecord != null){
-                    timeRecord.timeSum += time;
-                    timeRecord.count++;
-                }
-            }
-            case CONSUMER -> {
-                if (!consumerTimes.containsKey(count)) {
-                    consumerTimes.put(count, new TimeRecord());
-                }
-                timeRecord = consumerTimes.get(count);
-                if (timeRecord != null) {
-                    timeRecord.timeSum += time;
-                    timeRecord.count++;
-                }
-            }
+        if (!timesMap.containsKey(count)) {
+            timesMap.put(count, new TimeRecord());
+        }
+
+        TimeRecord timeRecord = timesMap.get(count);
+
+        if (timeRecord != null) {
+            timeRecord.timeSum += time;
+            timeRecord.count++;
         }
     }
 
@@ -61,7 +58,7 @@ public abstract class Buffer {
         for (int count = 0; count <= maxCount; count++) {
             timeRecord = producerTimes.get(count);
             if (timeRecord != null)
-                printWriter.print(count + "," + timeRecord.timeSum / timeRecord.count / 1e9 + "\n");
+                printWriter.print(count + "," + (timeRecord.timeSum / timeRecord.count) / 1e9 + "\n");
         }
 
         printWriter.close();
@@ -72,13 +69,10 @@ public abstract class Buffer {
         for (int count = 0; count <= maxCount; count++) {
             timeRecord = consumerTimes.get(count);
             if (timeRecord != null)
-                printWriter.print(count +"," + timeRecord.timeSum / timeRecord.count / 1e9 + "\n");
+                printWriter.print(count +"," + (timeRecord.timeSum / timeRecord.count) / 1e9 + "\n");
         }
 
         printWriter.close();
     }
-
-    abstract public void put(int count) throws InterruptedException;
-    abstract public void get(int count) throws InterruptedException;
 }
 

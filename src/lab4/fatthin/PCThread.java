@@ -4,13 +4,12 @@ import java.util.Random;
 
 public class PCThread extends Thread{
 
-    private long startTime;
     protected final Buffer buffer;
-    protected final Random rand;
+    static protected final Random rand = new Random();
+    private long startTime;
 
-    public PCThread(Buffer buffer, Random rand) {
+    public PCThread(Buffer buffer) {
         this.buffer = buffer;
-        this.rand = rand;
     }
 
     public void requestStart(){
