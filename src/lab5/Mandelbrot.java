@@ -8,7 +8,7 @@ public class Mandelbrot extends JFrame {
 
     private final int MAX_ITER = 600;
     private final double ZOOM = 150;
-    private BufferedImage I;
+    private final BufferedImage I;
 
     public final int height = 600;
     public final int width = 800;
@@ -41,6 +41,5 @@ public class Mandelbrot extends JFrame {
     public void paint(Graphics g) {
         g.drawImage(I, 0, 0, this);
     }
-
 
 }

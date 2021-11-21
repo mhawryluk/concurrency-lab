@@ -22,7 +22,6 @@ public class Task implements Callable {
 
             mandelbrot.pointRun(x, y);
         }
-
         return null;
     }
 }
