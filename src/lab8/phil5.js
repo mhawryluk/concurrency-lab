@@ -10,10 +10,12 @@ Fork.prototype.acquire = function(cb) {
     // 2. gdy proba jest nieudana, zwieksza czas oczekiwania dwukrotnie
     //    i ponawia probe itd.
 
-    wait = time => {
+    let self = this
+
+    function wait (time){
         setTimeout(() => {
-            if (this.state == 0){
-                this.state = 1;
+            if (self.state == 0){
+                self.state = 1;
                 if (cb) cb();
             } else {
                 console.log(`waiting ${time} s`)
@@ -58,7 +60,7 @@ Philosopher.prototype.startNaive = function(count) {
         () => this.forks[f1].acquire(() => {
             this.forks[f2].acquire(() => {
                 this.eat();
-                if (count > 0) this.startNaive(count-1);
+                if (count > 1) this.startNaive(count-1);
             });
         }),
         0
@@ -85,7 +87,7 @@ Philosopher.prototype.startAsym = function(count) {
         () => this.forks[f1].acquire(() => {
             this.forks[f2].acquire(() => {
                 this.eat();
-                if (count > 0) this.startAsym(count - 1);
+                if (count > 1) this.startAsym(count - 1);
             });
         }),
         0
@@ -104,7 +106,7 @@ Philosopher.prototype.startConductor = function(count) {
 }
 
 
-var N = 7;
+var N = 5;
 var forks = [];
 var philosophers = []
 for (var i = 0; i < N; i++) {
@@ -116,5 +118,5 @@ for (var i = 0; i < N; i++) {
 }
 
 for (var i = 0; i < N; i++) {
-    philosophers[i].startAsym(3);
+    philosophers[i].startAsym(5);
 }
