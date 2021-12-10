@@ -3,6 +3,35 @@ var Fork = function() {
     return this;
 }
 
+var Conductor = function(){
+    this.state = 0;
+    return this;
+}
+
+Conductor.prototype.acquire = function(cb){
+    let self = this
+
+    function wait (time){
+        setTimeout(() => {
+            timeTotal += time
+            if (self.state < N-1){
+                self.state++;
+                if (cb) cb();
+            } else {
+                // console.log(`conductor: waiting ${time} s`)
+                wait(time*2)
+            }
+        }, time);
+    }
+
+    wait(1);
+}
+
+Conductor.prototype.release = function() {
+    if (this.state < 1) console.error('table empty')
+    this.state--; 
+}
+
 Fork.prototype.acquire = function(cb) { 
     // zaimplementuj funkcje acquire, tak by korzystala z algorytmu BEB
     // (http://pl.wikipedia.org/wiki/Binary_Exponential_Backoff), tzn:
@@ -14,11 +43,12 @@ Fork.prototype.acquire = function(cb) {
 
     function wait (time){
         setTimeout(() => {
+            timeTotal += time
             if (self.state == 0){
                 self.state = 1;
                 if (cb) cb();
             } else {
-                console.log(`waiting ${time} s`)
+                // console.log(`fork: waiting ${time} s`)
                 wait(time*2)
             }
         }, time);
@@ -43,7 +73,7 @@ var Philosopher = function(id, forks) {
 }
 
 Philosopher.prototype.eat = function(){
-    console.log(`${this.id} eating...`);
+    // console.log(`${this.id} eating...`);
     this.forks[this.f1].release();
     this.forks[this.f2].release();
 }
@@ -103,12 +133,34 @@ Philosopher.prototype.startConductor = function(count) {
     // zaimplementuj rozwiazanie z kelnerem
     // kazdy filozof powinien 'count' razy wykonywac cykl
     // podnoszenia widelcow -- jedzenia -- zwalniania widelcow
+
+
+    setTimeout(
+        () => {
+            timeStart[id]= new Date().getTime()
+            conductor.acquire(
+                () => this.forks[f1].acquire(() => {
+                    this.forks[f2].acquire(() => {
+                        this.eat();
+                        conductor.release();
+                        timeTotal += new Date().getTime() - timeStart[id]
+                        console.log('time total: ', timeTotal)
+                        if (count > 1) this.startAsym(count - 1);
+                    });
+                })
+            )
+    },
+        0
+    )
 }
 
-
-var N = 5;
+var N = 10;
 var forks = [];
 var philosophers = []
+var conductor = new Conductor();
+var timeTotal = 0;
+var timeStart = Array(N);
+
 for (var i = 0; i < N; i++) {
     forks.push(new Fork());
 }
@@ -118,5 +170,5 @@ for (var i = 0; i < N; i++) {
 }
 
 for (var i = 0; i < N; i++) {
-    philosophers[i].startAsym(5);
+    philosophers[i].startConductor(5);
 }
