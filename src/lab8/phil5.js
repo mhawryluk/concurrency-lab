@@ -18,7 +18,7 @@ Conductor.prototype.acquire = function(cb){
                 self.state++;
                 if (cb) cb();
             } else {
-                // console.log(`conductor: waiting ${time} s`)
+                // console.log(`conductor: waiting ${time*2} ms`)
                 wait(time*2)
             }
         }, time);
@@ -42,13 +42,15 @@ Fork.prototype.acquire = function(cb) {
     let self = this
 
     function wait (time){
+        timeTotal += time
+        console.log(timeTotal)
         setTimeout(() => {
             timeTotal += time
             if (self.state == 0){
                 self.state = 1;
                 if (cb) cb();
             } else {
-                // console.log(`fork: waiting ${time} s`)
+                // console.log(`fork: waiting ${time*2} ms`)
                 wait(time*2)
             }
         }, time);
@@ -125,7 +127,7 @@ Philosopher.prototype.startAsym = function(count) {
 }
 
 Philosopher.prototype.startConductor = function(count) {
-    var forks = this.forks,
+    let forks = this.forks,
         f1 = this.f1,
         f2 = this.f2,
         id = this.id;
@@ -137,15 +139,12 @@ Philosopher.prototype.startConductor = function(count) {
 
     setTimeout(
         () => {
-            timeStart[id]= new Date().getTime()
             conductor.acquire(
                 () => this.forks[f1].acquire(() => {
                     this.forks[f2].acquire(() => {
                         this.eat();
                         conductor.release();
-                        timeTotal += new Date().getTime() - timeStart[id]
-                        console.log('time total: ', timeTotal)
-                        if (count > 1) this.startAsym(count - 1);
+                        if (count > 1) this.startConductor(count - 1);
                     });
                 })
             )
@@ -154,12 +153,11 @@ Philosopher.prototype.startConductor = function(count) {
     )
 }
 
-var N = 10;
+var N = 5;
 var forks = [];
 var philosophers = []
 var conductor = new Conductor();
 var timeTotal = 0;
-var timeStart = Array(N);
 
 for (var i = 0; i < N; i++) {
     forks.push(new Fork());
@@ -170,5 +168,5 @@ for (var i = 0; i < N; i++) {
 }
 
 for (var i = 0; i < N; i++) {
-    philosophers[i].startConductor(5);
+    philosophers[i].startAsym(1);
 }
