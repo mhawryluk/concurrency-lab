@@ -1,25 +1,28 @@
 package ordered;
 
-import org.jcsp.lang.Alternative;
 import org.jcsp.lang.CSProcess;
-import org.jcsp.lang.Guard;
 import org.jcsp.lang.One2OneChannelInt;
 
-/** Producer class: produces one random integer and sends on
-  * output channel, then terminates.
-  */
-public class Producer implements CSProcess { 
-    private final One2OneChannelInt out;
-    private final int count;
+/*
 
-    public Producer (One2OneChannelInt out, int count){
-        this.out = out;
-        this.count = count;
+PRODUCER:: p: porcja;
+*[true -> produkuj(p); BUFFER(0)!p]
+
+ */
+
+
+public class Producer implements CSProcess { 
+    private final One2OneChannelInt bufferChannel;
+
+    public Producer (One2OneChannelInt bufferChannel){
+        this.bufferChannel = bufferChannel;
     } 
 
     public void run (){
-        for (int i = 0; i < count; i++){
-            out.out().write(i);
+        int p = 0;
+        while (true){ // *[true ->
+            p++; // produkuj(p);
+            bufferChannel.out().write(p); // BUFFER(0)!p
         }
     }
 }

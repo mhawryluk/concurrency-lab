@@ -1,31 +1,35 @@
 package nonordered;
 import org.jcsp.lang.*;
 
-/** Producer class: produces one random integer and sends on
-  * output channel, then terminates.
+/*
+ [PRODUCER:: p: porcja;
+     *[true -> produkuj(p);
+
+     [(i:0..N-1) BUFFER(i)?JESZCZE() -> BUFFER(i)!p]
+ ]
   */
 public class Producer implements CSProcess { 
-    private final One2OneChannelInt [] out;
-    private final One2OneChannelInt [] notDone;
-    private final int count;
+    private final One2OneChannelInt [] bufferChannels;
+    private final One2OneChannelInt [] jeszczeChannels;
 
-    public Producer (One2OneChannelInt [] out, One2OneChannelInt [] notDone, int count){ 
-        this.out = out;
-        this.notDone = notDone;
-        this.count = count;
+    public Producer (One2OneChannelInt [] bufferChannels, One2OneChannelInt [] jeszczeChannels){
+        this.bufferChannels = bufferChannels;
+        this.jeszczeChannels = jeszczeChannels;
     } 
 
     public void run (){
-        Guard[] guards = new Guard[notDone.length];
-        for (int i = 0; i < out.length; i++)
-            guards[i] = notDone[i].in();
-
+        Guard[] guards = new Guard[jeszczeChannels.length];
+        for (int i = 0; i < bufferChannels.length; i++)
+            guards[i] = jeszczeChannels[i].in();
         Alternative alt = new Alternative(guards);
 
-        for (int i = 0; i < count; i++){
-            int index = alt.select();
-            notDone[index].in().read();
-            out[index].out().write(i);
+        int p = 0;
+
+        while (true){ //*[true ->
+            p++; // produkuj(p);
+            int i = alt.select(); // [(i:0..N-1)
+            jeszczeChannels[i].in().read(); // BUFFER(i)?JESZCZE()
+            bufferChannels[i].out().write(p); // BUFFER(i)!p
         }
     }
 }

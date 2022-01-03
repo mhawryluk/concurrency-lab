@@ -6,29 +6,30 @@ import org.jcsp.lang.*;
   * executes them in parallel, using JCSP.
   */
 public final class PCMain{
-  public static void main (String[] args){ 
+
+  public static void main (String[] args) {
     new PCMain();
   }
 
   public PCMain (){
     int N = 10;
-    int count = 100;
 
-    StandardChannelIntFactory fact = new StandardChannelIntFactory();
+    StandardChannelIntFactory factory = new StandardChannelIntFactory();
 
-    One2OneChannelInt channelsProd[] = fact.createOne2One(N);
-    One2OneChannelInt channelsNotDone[] = fact.createOne2One(N);
-    One2OneChannelInt channelsCons[] = fact.createOne2One(N);
+    One2OneChannelInt [] producerBufferChannels = factory.createOne2One(N);
+    One2OneChannelInt [] consumerBufferChannels = factory.createOne2One(N);
+    One2OneChannelInt [] jeszczeChannels = factory.createOne2One(N);
 
-    CSProcess[] procList = new CSProcess[N+2];
-    procList[0] = new Producer(channelsProd, channelsNotDone, count);
-    procList[1] = new Consumer(channelsCons, count);
+    CSProcess[] processes = new CSProcess[N+2];
 
-    for (int i = 0; i < N; i++)
-      procList[i+2] = new Buffer(channelsProd[i], channelsCons[i], channelsNotDone[i]);
-    
-    Parallel par = new Parallel(procList);
-    par.run();
+    processes[0] = new Producer(producerBufferChannels, jeszczeChannels);
+    processes[1] = new Consumer(consumerBufferChannels);
 
+    for (int i = 0; i < N; i++) {
+      processes[i+2] = new Buffer(producerBufferChannels[i], consumerBufferChannels[i], jeszczeChannels[i]);
+    }
+
+    Parallel parallel = new Parallel(processes);
+    parallel.run();
   } 
 }

@@ -16,20 +16,20 @@ public final class PCMain{
 
   public PCMain (){
     int N = 10;
-    int count = 100;
 
-    StandardChannelIntFactory fact = new StandardChannelIntFactory();
+    StandardChannelIntFactory factory = new StandardChannelIntFactory();
 
-    One2OneChannelInt [] channels = fact.createOne2One(N+1);
+    One2OneChannelInt [] channels = factory.createOne2One(N+1);
 
-    CSProcess[] procList = new CSProcess[N+2];
-    procList[0] = new Producer(channels[0], count);
-    procList[1] = new Consumer(channels[N], count);
+    CSProcess[] processes = new CSProcess[N+2];
+    processes[0] = new Producer(channels[0]);
+    processes[1] = new Consumer(channels[N]);
 
-    for (int i = 0; i < N; i++)
-      procList[i+2] = new Buffer(channels[i], channels[i+1]);
+    for (int i = 0; i < N; i++) {
+      processes[i + 2] = new Buffer(channels[i], channels[i + 1]);
+    }
     
-    Parallel par = new Parallel(procList);
-    par.run();
+    Parallel parallel = new Parallel(processes);
+    parallel.run();
   } 
 }

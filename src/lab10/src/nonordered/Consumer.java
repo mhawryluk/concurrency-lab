@@ -1,29 +1,31 @@
 package nonordered;
 import org.jcsp.lang.*;
 
-/** Consumer class: reads one int from input channel, displays it, then
-  * terminates.
-  */
-public class Consumer implements CSProcess { 
-  private final One2OneChannelInt [] in;
-  private final int count;
+/*
+CONSUMER:: p: porcja;
 
-  public Consumer (One2OneChannelInt [] in, int count){ 
-    this.in = in;
-    this.count = count;
+*[(i:0..N-1) BUFFER(i)?p -> konsumuj(p)]
+
+ */
+public class Consumer implements CSProcess { 
+  private final One2OneChannelInt [] bufferChannels;
+
+  public Consumer (One2OneChannelInt [] bufferChannels){
+    this.bufferChannels = bufferChannels;
   } 
 
   public void run (){  
-    Guard[] guards = new Guard[in.length];
-    for (int i = 0; i < in.length; i++)
-      guards[i] = in[i].in();
+    Guard[] guards = new Guard[bufferChannels.length];
+
+    for (int i = 0; i < bufferChannels.length; i++)
+      guards[i] = bufferChannels[i].in();
     
     Alternative alt = new Alternative(guards);
 
-    for (int i = 0; i < count; i++){
-      int index = alt.select();
-      int item = in[index].in().read();
-      System.out.println(index + ": " + item);
+    while (true){ // *[
+      int i = alt.select(); // (i:0..N-1)
+      int p = bufferChannels[i].in().read(); // BUFFER(i)?p
+      System.out.println("consumed #" + p); // konsumuj(p)
     }
   }
 }

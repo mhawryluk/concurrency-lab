@@ -1,26 +1,24 @@
 package ordered;
 
-import org.jcsp.lang.Alternative;
 import org.jcsp.lang.CSProcess;
-import org.jcsp.lang.Guard;
 import org.jcsp.lang.One2OneChannelInt;
 
-/** Consumer class: reads one int from input channel, displays it, then
-  * terminates.
-  */
-public class Consumer implements CSProcess { 
-  private final One2OneChannelInt in;
-  private final int count;
+/*
+ CONSUMER:: p: porcja;
+  *[BUFFER(N-1)?p -> konsumuj(p)]
+ */
 
-  public Consumer (One2OneChannelInt in, int count){
-    this.in = in;
-    this.count = count;
+public class Consumer implements CSProcess { 
+  private final One2OneChannelInt bufferChannel;
+
+  public Consumer (One2OneChannelInt bufferChannel){
+    this.bufferChannel = bufferChannel;
   } 
 
   public void run (){
-    for (int i = 0; i < count; i++){
-      int item = in.in().read();
-      System.out.println(item);
+    while (true){ // *[
+      int p = bufferChannel.in().read(); // BUFFER(N-1)?p ->
+      System.out.println("Consumed #" + p); // konsumuj(p)
     }
   }
 }
