@@ -1,10 +1,7 @@
 package nonordered;
 import org.jcsp.lang.*;
 
-/** Main program class for Producer/Consumer example.
-  * Sets up channel, creates one of each process then
-  * executes them in parallel, using JCSP.
-  */
+
 public final class PCMain{
 
   public static void main (String[] args) {
