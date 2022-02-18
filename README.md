@@ -1,27 +1,10 @@
 # Concurrency Lab
-> My solutions to problems from the Theory of Concurrency class at the AGH University.
 
-## Table of Contents
-  - [Table of Contents](#table-of-contents)
-  - [Laboratory classes](#laboratory-classes)
-  - [Technologies Used](#technologies-used)
-  - [Screenshots](#screenshots)
-  - [Sources](#acknowledgements)
-
-
-## Laboratory classes
-    1. lab1
-    2. lab2
-    3. lab3
-
-
-## Technologies Used
-- Java
-- Python 3, pandas, numpy, matplotlib, Jupyter Notebook
-
-
-## Screenshots
-![Example screenshot](./img/screenshot.png)
-
-## Sources
-
+1. [Producers & consumers - Java](src/lab1)
+2. [Semaphores - Java](src/lab2)
+3. [Table reservations - Java](src/lab3)
+4. ["Fat & thin" producers & consumers - Java](src/lab4)
+5. [Mandelbrot set - Java](src/lab5)
+6. [setTimeout - Node.js](src/lab6)
+7. [Dining philosophers problem - Node.js](src/lab8)
+8. [CSP - Java (jcsp)](src/lab10)
